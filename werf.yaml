@@ -1,4 +1,4 @@
-project: d8-module-gitea
+project: echoserver
 configVersion: 1
 build:
   imageSpec:

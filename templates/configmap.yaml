@@ -1,13 +1,57 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.serviceName }}-config
+  name: gitea-config
+  namespace: {{ .Release.Namespace | default .Chart.Name }}
+  {{- include "helm_lib_module_labels" (list . (dict "app" "gitea")) | nindent 2 }}
+  annotations:
+    helm.sh/hook-weight: "0"
+    {{- if .Values.gitea.configMapAnnotations }}
+    {{- toYaml .Values.gitea.configMapAnnotations | nindent 4 }}
+    {{- end }}
 data:
   app.ini: |
-    APP_NAME = {{ .Values.configMap.APP_NAME }}
     [database]
-    DB_TYPE = {{ .Values.configMap.DB_TYPE }}
-    HOST = {{ .Values.postgres.host }}:{{ .Values.postgres.port }}
-    NAME = {{ .Values.postgres.database }}
-    USER = {{ .Values.postgres.user }}
-    PASSWD = {{ .Values.postgres.password }}
+    DB_TYPE = {{ .Values.gitea.database.type | default "postgresql" }}
+    HOST = {{ .Values.gitea.database.host | default "gitea-postgresql:5432" }}
+    NAME = {{ .Values.gitea.database.name | default "gitea" }}
+    USER = {{ .Values.gitea.database.user | default "gitea" }}
+    PASSWD = {{ .Values.gitea.database.password | default "" | quote }}
+
+    [server]
+    DOMAIN = {{ include "helm_lib_module_public_domain" (list . "gitea") }}
+    ROOT_URL = https://{{ include "helm_lib_module_public_domain" (list . "gitea") }}
+    HTTP_PORT = 3000
+    SSH_PORT = 22
+    DISABLE_SSH = {{ not .Values.gitea.ssh.enabled | default false | quote }}
+
+    [session]
+    PROVIDER = {{ .Values.gitea.session.provider | default "db" }}
+
+    [log]
+    LEVEL = {{ .Values.gitea.log.level | default "info" }}
+    ROOT_PATH = /data/gitea/log
+
+    [security]
+    SECRET_KEY = {{ .Values.gitea.security.secretKey | default "" | quote }}
+    INTERNAL_TOKEN = {{ .Values.gitea.security.internalToken | default "" | quote }}
+
+    {{- if .Values.gitea.oidc.enabled }}
+    [oauth2]
+    ENABLED = true
+    PROVIDER = openidConnect
+    KEY = {{ .Values.gitea.oidc.clientID | default "gitea" | quote }}
+    SECRET = {{ .Values.gitea.oidc.clientSecret | default "" | quote }}
+    AUTO_DISCOVER_URL = {{ .Values.gitea.oidc.issuerURL | default "" }}/.well-known/openid-configuration
+    {{- end }}
+
+  _example: |
+    # Пример конфигурации Gitea
+    [repository]
+    ROOT = /data/git/repositories
+    DEFAULT_BRANCH = main
+
+    [mailer]
+    ENABLED = true
+    FROM = gitea@{{ include "helm_lib_module_public_domain" (list . "gitea") }}

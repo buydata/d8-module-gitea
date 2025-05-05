@@ -1,11 +1,26 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.serviceName }}
+  name: gitea
+  namespace: {{ .Release.Namespace | default .Chart.Name }}
+  {{- include "helm_lib_module_labels" (list . (dict "app" "gitea")) | nindent 2 }}
+  annotations:
+    {{- if .Values.gitea.service.annotations }}
+    {{- toYaml .Values.gitea.service.annotations | nindent 4 }}
+    {{- end }}
 spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000  # Порт Gitea HTTP
+      protocol: TCP
+    - name: ssh
+      port: 22
+      targetPort: 22    # Порт Gitea SSH
+      protocol: TCP
+  type: {{ .Values.gitea.service.type | default "ClusterIP" }}
   selector:
     app: gitea
-  ports:
-  - protocol: TCP
-    port: {{ .Values.servicePort }}
-    targetPort: {{ .Values.containerPort }}
+    {{- if .Values.gitea.service.additionalSelectors }}
+    {{- toYaml .Values.gitea.service.additionalSelectors | nindent 4 }}
