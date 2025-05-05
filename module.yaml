@@ -1,9 +1,12 @@
-name: echoserver
-stage: Sandbox
-weight: 960
-subsystems:
-  - chore
-namespace: echoserver
-descriptions:
-  en: A simple echoserver for demo purposes.
-tags: ["demo"]
+apiVersion: deckhouse.io/v1alpha1
+kind: Module
+metadata:
+  name: gitea
+shortDescription: Gitea module for Deckhouse
+description: |
+  This module provides a way to deploy and manage Gitea within your Kubernetes cluster.
+version: 0.1.0
+settings:
+- name: giteaConfig
+  type: object
+  description: Configuration for Gitea

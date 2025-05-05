@@ -1,0 +1,5 @@
+baseImages:
+  gitea-base:
+    from: gitea/gitea:1.20.3
+    gitPatchCleaner:
+      paths: [/data]

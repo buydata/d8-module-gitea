@@ -1,0 +1,37 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: giteaconfigs.deckhouse.io
+spec:
+  group: deckhouse.io
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                adminPassword:
+                  type: string
+                database:
+                  type: object
+                  properties:
+                    host:
+                      type: string
+                    name:
+                      type: string
+                    user:
+                      type: string
+                    password:
+                      type: string
+  scope: Namespaced
+  names:
+    plural: giteaconfigs
+    singular: giteaconfig
+    kind: GiteaConfig
+    shortNames:
+      - gc
