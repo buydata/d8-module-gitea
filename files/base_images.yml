@@ -1,4 +1,4 @@
 REGISTRY_PATH: docker.gitea.com
 
-gitea-base: gitea/gitea:1.23.7
+gitea: gitea/gitea:1.23.7
 
