@@ -1,4 +1,4 @@
-project: gitea
+project: d8-module-gitea
 configVersion: 1
 build:
   imageSpec:
