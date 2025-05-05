@@ -1,0 +1,49 @@
+# Включить/выключить развертывание Gitea
+enabled: true
+
+# Название сервиса
+serviceName: gitea
+
+# Название деплоймента
+deploymentName: gitea
+
+# Версия образа Gitea
+image:
+  repository: gitea/gitea
+  tag: 1.20.3
+  pullPolicy: IfNotPresent
+
+# Ресурсы для подов
+resources:
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+# Порт, на котором будет доступен Gitea
+servicePort: 3000
+
+# Внутренний порт контейнера
+containerPort: 3000
+
+# Репозиторий для базы данных PostgreSQL
+postgres:
+  enabled: true
+  host: gitea-postgresql
+  port: 5432
+  database: gitea
+  user: gitea
+  password: ""
+
+# Настройка persistent volume
+persistence:
+  storageClass: "standard"
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+# Конфигурационный файл Gitea
+configMap:
+  APP_NAME: "Gitea: Git with a cup of tea"
+  DB_TYPE: postgres
