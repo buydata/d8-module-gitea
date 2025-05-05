@@ -1,5 +1,4 @@
-baseImages:
-  gitea-base:
-    from: gitea/gitea:1.20.3
-    gitPatchCleaner:
-      paths: [/data]
+REGISTRY_PATH: ghcr.io/buydata/modules/d8-module-gitea
+
+gitea-base: gitea/gitea:1.20.3
+
