@@ -1,4 +1,4 @@
-project: echoserver
+project: gitea
 configVersion: 1
 build:
   imageSpec:
