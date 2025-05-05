@@ -1,17 +1,28 @@
-project: echoserver
+project: d8-module-gitea
+
+stages-storage: :local
+
+images:
+  gitea:
+    fromImage: "gitea-base"
+
 configVersion: 1
-build:
-  imageSpec:
-    author: "Deckhouse Kubernetes Platform <contact@deckhouse.io>"
-    clearHistory: true
-    config:
-      clearWerfLabels: true
-      removeLabels:
-        - /.*/
+
+# Base Images
+{{- $baseImages := .Files.Get "files/base_images.yml" | fromYaml }}
+{{- range $k, $v := $baseImages }}
+  {{ $baseImagePath := (printf "%s@%s" $baseImages.REGISTRY_PATH (trimSuffix "/" $v)) }}
+  {{- if ne $k "REGISTRY_PATH" }}
+    {{- $_ := set $baseImages $k $baseImagePath }}
+  {{- end }}
+{{- end }}
+{{- $_ := unset $baseImages "REGISTRY_PATH" }}
+
+{{- $_ := set . "Images" $baseImages }}
+# base images artifacts
+{{- range $k, $v := .Images }}
 ---
-{{ tpl (.Files.Get ".werf/stages/base-images.yaml") $ }}
-{{ tpl (.Files.Get ".werf/stages/images.yaml") $ }}
-{{ tpl (.Files.Get ".werf/stages/images-digests.yaml") $ }}
-{{ tpl (.Files.Get ".werf/stages/python-deps.yaml") $ }}
-{{ tpl (.Files.Get ".werf/stages/bundle.yaml") $ }}
-{{ tpl (.Files.Get ".werf/stages/release.yaml") $ }}
+image: {{ $k }}
+from: {{ $v }}
+final: false
+{{- end }}
