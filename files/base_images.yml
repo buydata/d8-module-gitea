@@ -1,4 +1,4 @@
-REGISTRY_PATH: ghcr.io/buydata/modules/d8-module-gitea
+REGISTRY_PATH: docker.gitea.com
 
-gitea-base: gitea/gitea:1.20.3
+gitea-base: gitea/gitea:1.23.7
 
